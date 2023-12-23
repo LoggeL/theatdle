@@ -94,4 +94,17 @@ function guessRole(role, year) {
   document.getElementById('autocomplete-input').value = ''
 
   document.getElementsByTagName('tbody')[0].innerHTML += tableString + '</tr>'
+
+  // If all correct, remove input and autocomplete
+  console.log(response)
+  if (Object.values(response).every((v) => v === 'green')) {
+    document.getElementById('autocomplete-input').remove()
+    document.getElementById('autocomplete').remove()
+
+    // Alert
+    const numTries = document.getElementsByTagName('tbody')[0].children.length
+    alert(
+      `Korrekt! Du hast die Rolle erraten! Du hast ${numTries} Versuche gebraucht.`
+    )
+  }
 }
