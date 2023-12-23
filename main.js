@@ -10,7 +10,9 @@ const seed = parseInt(
 const x = Math.sin(seed) * 10000
 let correctIndex = null
 
-fetch('data.csv')
+fetch(
+  'https://docs.google.com/spreadsheets/d/1fLlhPInXTClHR5bMcjY90JHVj3vGarUZMtmFDrbRwK4/pub?output=csv'
+)
   .then((response) => {
     return response.text()
   })
@@ -31,13 +33,24 @@ fetch('data.csv')
 
 document.getElementById('autocomplete-input').addEventListener('keyup', (e) => {
   // get a list of all the roles
-  const roles = roleData.map((r) => ({ jahr: r.Jahr, charakter: r.Charakter }))
+  const roles = roleData.map((r) => ({
+    jahr: r.Jahr,
+    charakter: r.Charakter,
+    person: r.Schauspieler,
+  }))
   // get the input value
   const input = e.target.value
-  // filter the roles
-  const filteredRoles = roles.filter((r) => {
-    return r.charakter.toLowerCase().includes(input.toLowerCase())
-  })
+  // filter the roles using stringSimilarity.findBestMatch
+  const filteredRoles = stringSimilarity
+    .findBestMatch(
+      input,
+      roles.map((r) => `${r.jahr};${r.charakter};${r.person}`)
+    )
+    .ratings.sort((a, b) => b.rating - a.rating)
+    .map((r) => {
+      const [jahr, charakter, person] = r.target.split(';')
+      return { jahr, charakter, person }
+    })
 
   const autocomplete = document.getElementById('autocomplete')
   autocomplete.innerHTML = ''
@@ -48,6 +61,7 @@ document.getElementById('autocomplete-input').addEventListener('keyup', (e) => {
       ? `<a class="row wave" onclick="guessRole('${filteredRoles[i].charakter}', '${filteredRoles[i].jahr}')">
       <div>${filteredRoles[i].jahr}</div>
       <div>${filteredRoles[i].charakter}</div>
+      <div>(${filteredRoles[i].person})</div>
     </a>`
       : ''
   }
