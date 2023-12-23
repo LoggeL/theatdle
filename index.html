@@ -56,6 +56,12 @@
         border-right: calc(100vw * 0.55) solid transparent;
         border-bottom: calc(100vw * 0.25) solid var(--primary);
       }
+
+      #share {
+        width: 100%;
+        height: 100%;
+        font-size: 1.5rem;
+      }
     </style>
   </head>
   <body>
@@ -90,6 +96,13 @@
         </thead>
         <tbody></tbody>
       </table>
+      <div id="share-container" class="center-align" style="display: none">
+        <h5>
+          Teilen:
+          <button class="button" id="share-button">Kopieren</button>
+        </h5>
+        <textarea id="share"></textarea>
+      </div>
     </main>
     <script
       type="module"

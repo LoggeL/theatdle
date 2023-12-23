@@ -106,5 +106,36 @@ function guessRole(role, year) {
     alert(
       `Korrekt! Du hast die Rolle erraten! Du hast ${numTries} Versuche gebraucht.`
     )
+
+    // Fill share area
+    const shareArea = document.getElementById('share')
+    const shareContainer = document.getElementById('share-container')
+    shareContainer.style.display = 'block'
+    // Fill with emojis
+    shareArea.value = ``
+    const articles = document.querySelectorAll('article')
+    for (let i = 0; i < articles.length; i++) {
+      const article = articles[i]
+      const color = article.classList[0]
+      if (color === 'green') {
+        shareArea.value += '🟩'
+      } else if (color === 'yellow') {
+        shareArea.value += '🟨'
+      } else {
+        shareArea.value += '🟥'
+      }
+      if ((i + 1) % 8 === 0) {
+        shareArea.value += '\n'
+        shareArea.style.height = i / 8 + 1 + 'em'
+      }
+    }
   }
 }
+
+document.getElementById('share-button').addEventListener('click', (e) => {
+  const shareArea = document.getElementById('share')
+  shareArea.select()
+  shareArea.setSelectionRange(0, 99999)
+  document.execCommand('copy')
+  alert('Kopiert!')
+})
