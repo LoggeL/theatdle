@@ -10,6 +10,8 @@ const seed = parseInt(
 const x = Math.sin(seed) * 10000
 let correctIndex = null
 
+let guesses = []
+
 fetch(
   'https://docs.google.com/spreadsheets/d/1fLlhPInXTClHR5bMcjY90JHVj3vGarUZMtmFDrbRwK4/pub?output=csv'
 )
@@ -29,6 +31,25 @@ fetch(
       roleData.push(obj)
     }
     correctIndex = Math.floor((x - Math.floor(x)) * roleData.length)
+
+    // Check history
+    const history = localStorage.getItem('history')
+    if (history) {
+      // Compare history.date with today
+      const historyDate = new Date(JSON.parse(history).date)
+      if (
+        historyDate.getFullYear() === today.getFullYear() &&
+        historyDate.getMonth() === today.getMonth() &&
+        historyDate.getDate() === today.getDate()
+      ) {
+        // Same day, use history to load guesses
+        const historyData = JSON.parse(history).data
+        for (let i = 0; i < historyData.length; i++) {
+          const data = historyData[i]
+          guessRole(data.charakter, data.jahr)
+        }
+      }
+    }
   })
 
 document.getElementById('autocomplete-input').addEventListener('keyup', (e) => {
@@ -56,7 +77,7 @@ document.getElementById('autocomplete-input').addEventListener('keyup', (e) => {
   autocomplete.innerHTML = ''
 
   // Fill the top 5
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < filteredRoles.length; i++) {
     autocomplete.innerHTML += filteredRoles[i]
       ? `<a class="row wave" onclick="guessRole('${filteredRoles[i].charakter}', '${filteredRoles[i].jahr}')">
       <div>${filteredRoles[i].jahr}</div>
@@ -144,6 +165,12 @@ function guessRole(role, year) {
       }
     }
   }
+
+  guesses.push({ charakter: role, jahr: year })
+  localStorage.setItem(
+    'history',
+    JSON.stringify({ date: today, data: guesses })
+  )
 }
 
 document.getElementById('share-button').addEventListener('click', (e) => {
