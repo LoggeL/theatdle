@@ -12,45 +12,63 @@ let correctIndex = null
 
 let guesses = []
 
-fetch(
+const url =
   'https://docs.google.com/spreadsheets/d/1fLlhPInXTClHR5bMcjY90JHVj3vGarUZMtmFDrbRwK4/pub?output=csv'
-)
-  .then((response) => {
-    return response.text()
-  })
-  .then((data) => {
-    // Parse csv
-    const headers = data.split('\n')[0].split(',')
-    const rows = data.split('\n').slice(1)
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i].split(',')
-      const obj = {}
-      for (let j = 0; j < headers.length; j++) {
-        obj[headers[j]] = row[j].replace('\r', '')
-      }
-      roleData.push(obj)
-    }
-    correctIndex = Math.floor((x - Math.floor(x)) * roleData.length)
+const cacheName = 'doc-cache'
 
-    // Check history
-    const history = localStorage.getItem('history')
-    if (history) {
-      // Compare history.date with today
-      const historyDate = new Date(JSON.parse(history).date)
-      if (
-        historyDate.getFullYear() === today.getFullYear() &&
-        historyDate.getMonth() === today.getMonth() &&
-        historyDate.getDate() === today.getDate()
-      ) {
-        // Same day, use history to load guesses
-        const historyData = JSON.parse(history).data
-        for (let i = 0; i < historyData.length; i++) {
-          const data = historyData[i]
-          guessRole(data.charakter, data.jahr)
+caches.open(cacheName).then((cache) => {
+  cache
+    .match(url)
+    .then((cachedResponse) => {
+      if (cachedResponse) {
+        // If the request is in the cache, return the cached response
+        return cachedResponse.text()
+      } else {
+        // If the request is not in the cache, fetch it from the network
+        return fetch(url).then((networkResponse) => {
+          // Clone the network response
+          const clonedResponse = networkResponse.clone()
+          // Add the request and response to the cache
+          cache.put(url, clonedResponse)
+          // Return the network response
+          return networkResponse.text()
+        })
+      }
+    })
+    .then((data) => {
+      // Parse csv
+      const headers = data.split('\n')[0].split(',')
+      const rows = data.split('\n').slice(1)
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i].split(',')
+        const obj = {}
+        for (let j = 0; j < headers.length; j++) {
+          obj[headers[j]] = row[j].replace('\r', '')
+        }
+        roleData.push(obj)
+      }
+      correctIndex = Math.floor((x - Math.floor(x)) * roleData.length)
+
+      // Check history
+      const history = localStorage.getItem('history')
+      if (history) {
+        // Compare history.date with today
+        const historyDate = new Date(JSON.parse(history).date)
+        if (
+          historyDate.getFullYear() === today.getFullYear() &&
+          historyDate.getMonth() === today.getMonth() &&
+          historyDate.getDate() === today.getDate()
+        ) {
+          // Same day, use history to load guesses
+          const historyData = JSON.parse(history).data
+          for (let i = 0; i < historyData.length; i++) {
+            const data = historyData[i]
+            guessRole(data.charakter, data.jahr)
+          }
         }
       }
-    }
-  })
+    })
+})
 
 document.getElementById('autocomplete-input').addEventListener('keyup', (e) => {
   // get a list of all the roles

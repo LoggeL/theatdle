@@ -63,6 +63,15 @@
         height: 100%;
         font-size: 1.5rem;
       }
+
+      th {
+        min-width: 100px;
+      }
+
+      .table-container {
+        overflow-x: scroll;
+        width: 100%;
+      }
     </style>
   </head>
   <body>
@@ -82,21 +91,24 @@
 
       <div id="autocomplete"></div>
 
-      <table>
-        <thead>
-          <tr>
-            <th class="center-align">Stück</th>
-            <th class="center-align">Schauspieler</th>
-            <th class="center-align">Charakter</th>
-            <th class="center-align">Aktuell/Ehemalig</th>
-            <th class="center-align">Geschlecht</th>
-            <th class="center-align">Gesinnung</th>
-            <th class="center-align">Rollengröße</th>
-            <th class="center-align">Gruppierung</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th class="center-align">Stück</th>
+              <th class="center-align">Schauspieler</th>
+              <th class="center-align">Charakter</th>
+              <th class="center-align">Aktuell/Ehemalig</th>
+              <th class="center-align">Geschlecht</th>
+              <th class="center-align">Gesinnung</th>
+              <th class="center-align">Rollengröße</th>
+              <th class="center-align">Gruppierung</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
       <div id="share-container" class="center-align" style="display: none">
         <h5>
           Teilen:
