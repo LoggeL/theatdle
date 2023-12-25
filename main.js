@@ -151,7 +151,7 @@ function guessRole(role, year) {
   // If all correct, remove input and autocomplete
   console.log(response)
   if (Object.values(response).every((v) => v === 'green')) {
-    document.getElementById('autocomplete-input').remove()
+    document.getElementById('autocomplete-input').parentElement.remove()
     document.getElementById('autocomplete').remove()
 
     // Alert
@@ -165,7 +165,7 @@ function guessRole(role, year) {
     const shareContainer = document.getElementById('share-container')
     shareContainer.style.display = 'block'
     // Fill with emojis
-    shareArea.value = ``
+    shareArea.value = `🎉 ${numTries} Versuche 🎉\nhttps://loggel.github.io/theatdle/\n`
     const articles = document.querySelectorAll('article')
     for (let i = 0; i < articles.length; i++) {
       const article = articles[i]
@@ -179,7 +179,7 @@ function guessRole(role, year) {
       }
       if ((i + 1) % 8 === 0) {
         shareArea.value += '\n'
-        shareArea.style.height = i / 8 + 1 + 'em'
+        shareArea.style.height = i / 8 + 3 + 'em'
       }
     }
   }
